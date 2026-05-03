@@ -12,6 +12,10 @@ class ProductController {
       offer: Yup.boolean(),
     });
 
+    if (request.body.offer !== undefined) {
+      request.body.offer = request.body.offer === 'true';
+    }
+
     try {
       schema.validateSync(request.body, {
         abortEarly: false,

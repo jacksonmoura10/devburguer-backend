@@ -30,7 +30,7 @@ const OrderSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
-        url: {
+        path: {
           type: String,
           required: true,
         },
@@ -42,11 +42,11 @@ const OrderSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      default: 'pedido realizado', // valor inicial automático
+      default: 'Pedido realizado',
     },
   },
   {
-    timestamps: true, // cria createdAt e updatedAt automaticamente
+    timestamps: true,
   }
 );
 

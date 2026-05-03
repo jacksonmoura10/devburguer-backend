@@ -1,4 +1,4 @@
-import * as Yup from 'yup'; // ✅ troca o import para funcionar no Sucrase
+import * as Yup from 'yup';
 import Category from '../models/Category';
 import User from '../models/User';
 
@@ -9,18 +9,25 @@ class CategoryController {
     });
 
     try {
-      schema.validateSync(request.body, { abortEarly: false });
+      schema.validateSync(request.body, {
+        abortEarly: false,
+      });
     } catch (err) {
-      return response.status(400).json({ error: err.errors });
+      return response.status(400).json({
+        error: err.errors,
+      });
     }
 
     const { admin: isAdmin } = await User.findByPk(request.userId);
 
     if (!isAdmin) {
-      return response.status(401).json({ error: 'User is not admin' });
+      return response.status(401).json({
+        error: 'User is not admin',
+      });
     }
 
     const { filename: path } = request.file;
+
     const { name } = request.body;
 
     const categoryExists = await Category.findOne({
@@ -30,7 +37,9 @@ class CategoryController {
     });
 
     if (categoryExists) {
-      return response.status(400).json({ error: 'Category already exists' });
+      return response.status(400).json({
+        error: 'Category already exists',
+      });
     }
 
     const { id } = await Category.create({
@@ -38,7 +47,10 @@ class CategoryController {
       path,
     });
 
-    return response.status(201).json({ id, name });
+    return response.status(201).json({
+      id,
+      name,
+    });
   }
 
   async update(request, response) {
@@ -47,30 +59,35 @@ class CategoryController {
     });
 
     try {
-      schema.validateSync(request.body, { abortEarly: false });
+      schema.validateSync(request.body, {
+        abortEarly: false,
+      });
     } catch (err) {
-      return response.status(400).json({ error: err.errors });
+      return response.status(400).json({
+        error: err.errors,
+      });
     }
 
     const { admin: isAdmin } = await User.findByPk(request.userId);
 
     if (!isAdmin) {
-      return response.status(401).json({ error: 'User is not admin' });
+      return response.status(401).json({
+        error: 'User is not admin',
+      });
     }
 
     const { id } = request.params;
 
-    // ✅ aqui estava "category" minúsculo, corrigi para "Category"
     const categoryExists = await Category.findByPk(id);
 
-    // ✅ sua lógica estava invertida: precisa ser !categoryExists
     if (!categoryExists) {
-      return response
-        .status(400)
-        .json({ message: 'Make sure category ID is correct' });
+      return response.status(400).json({
+        message: 'Make sure category ID is correct',
+      });
     }
 
     let path;
+
     if (request.file) {
       path = request.file.filename;
     }
@@ -84,8 +101,10 @@ class CategoryController {
         },
       });
 
-      if (categoryNameExists && categoryNameExists.id !== +id) {
-        return response.status(400).json({ error: 'Category already exists' });
+      if (categoryNameExists && categoryNameExists.id !== Number(id)) {
+        return response.status(400).json({
+          error: 'Category already exists',
+        });
       }
     }
 
@@ -101,14 +120,46 @@ class CategoryController {
       },
     );
 
-    return response.status(200).json();
+    return response.status(200).json({
+      message: 'Category updated successfully',
+    });
+  }
+
+  async delete(request, response) {
+    const { admin: isAdmin } = await User.findByPk(request.userId);
+
+    if (!isAdmin) {
+      return response.status(401).json({
+        error: 'User is not admin',
+      });
+    }
+
+    const { id } = request.params;
+
+    const categoryExists = await Category.findByPk(id);
+
+    if (!categoryExists) {
+      return response.status(400).json({
+        error: 'Make sure category ID is correct',
+      });
+    }
+
+    await Category.destroy({
+      where: {
+        id,
+      },
+    });
+
+    return response.status(200).json({
+      message: 'Category deleted successfully',
+    });
   }
 
   async index(request, response) {
     const categories = await Category.findAll();
+
     return response.json(categories);
   }
 }
 
 export default new CategoryController();
-

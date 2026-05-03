@@ -1,11 +1,10 @@
 import * as Yup from 'yup';
-import Order from '../schemas/order';
-import Product from '../models/Products';
 import Category from '../models/Category';
+import Product from '../models/Products';
 import User from '../models/User';
+import Order from '../schemas/order';
 
 class OrderController {
-  // Criar um pedido
   async store(request, response) {
     const schema = Yup.object({
       products: Yup.array()
@@ -19,16 +18,23 @@ class OrderController {
     });
 
     try {
-      schema.validateSync(request.body, { abortEarly: false });
+      schema.validateSync(request.body, {
+        abortEarly: false,
+      });
     } catch (err) {
-      return response.status(400).json({ error: err.errors });
+      return response.status(400).json({
+        error: err.errors,
+      });
     }
 
     const { products } = request.body;
+
     const productsIds = products.map((product) => product.id);
 
     const findProducts = await Product.findAll({
-      where: { id: productsIds },
+      where: {
+        id: productsIds,
+      },
       include: [
         {
           model: Category,
@@ -41,15 +47,14 @@ class OrderController {
     const formattedProducts = findProducts.map((product) => {
       const productIndex = products.findIndex((item) => item.id === product.id);
 
-      const newProduct = {
+      return {
         id: product.id,
         name: product.name,
         category: product.category.name,
         price: product.price,
-        url: product.url,
+        path: product.path,
         quantity: products[productIndex].quantity,
       };
-      return newProduct;
     });
 
     const order = {
@@ -58,7 +63,7 @@ class OrderController {
         name: request.userName,
       },
       products: formattedProducts,
-      status: 'pedido realizado',
+      status: 'Pedido realizado',
     };
 
     const createdOrder = await Order.create(order);
@@ -66,46 +71,88 @@ class OrderController {
     return response.status(201).json(createdOrder);
   }
 
-  // Listar pedidos
   async index(request, response) {
     try {
+      const { admin: isAdmin } = await User.findByPk(request.userId);
+
+      if (!isAdmin) {
+        return response.status(401).json({
+          error: 'User is not admin',
+        });
+      }
+
       const orders = await Order.find();
+
       return response.json(orders);
     } catch (err) {
-      return response
-        .status(400)
-        .json({ error: 'Não foi possível listar os pedidos' });
+      return response.status(400).json({
+        error: 'Não foi possível listar os pedidos',
+      });
     }
   }
 
-  // Atualizar status do pedido
+  async myOrders(request, response) {
+    try {
+      const orders = await Order.find({ 'user.id': request.userId });
+      return response.json(orders);
+    } catch (err) {
+      return response.status(400).json({
+        error: 'Não foi possível listar os pedidos',
+      });
+    }
+  }
+
   async update(request, response) {
     const schema = Yup.object({
       status: Yup.string().required(),
     });
 
     try {
-      schema.validateSync(request.body, { abortEarly: false });
+      schema.validateSync(request.body, {
+        abortEarly: false,
+      });
     } catch (err) {
-      return response.status(400).json({ error: err.errors });
+      return response.status(400).json({
+        error: err.errors,
+      });
     }
 
     const { admin: isAdmin } = await User.findByPk(request.userId);
 
     if (!isAdmin) {
-      return response.status(401).json({ error: 'User is not admin' });
+      return response.status(401).json({
+        error: 'User is not admin',
+      });
     }
 
     const { id } = request.params;
     const { status } = request.body;
 
     try {
-      await Order.updateOne({ _id: id }, { status });
-      return response.json({ message: 'Status atualizado com sucesso' });
+      const orderExists = await Order.findById(id);
+
+      if (!orderExists) {
+        return response.status(400).json({
+          error: 'Order not found',
+        });
+      }
+
+      await Order.updateOne(
+        {
+          _id: id,
+        },
+        {
+          status,
+        },
+      );
+
+      return response.json({
+        message: 'Status atualizado com sucesso',
+      });
     } catch (err) {
-      return response
-        .status(400)
-        .json({ error: 'Erro ao atualizar o status do pedido' });
+      return response.status(400).json({
+        error: 'Erro ao atualizar o status do pedido',
+      });
     }
   }
 }
