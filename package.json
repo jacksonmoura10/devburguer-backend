@@ -4,7 +4,8 @@
   "description": "Deveburguer",
   "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "start": "sucrase-node src/server.js"
   },
   "author": {
     "name": "Jackson moura",
