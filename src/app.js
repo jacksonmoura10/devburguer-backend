@@ -12,7 +12,11 @@ class App {
   }
 
   middlewares() {
-    this.app.use(cors({ origin: 'http://localhost:5173' })); 
+    this.app.use(
+      cors({
+        origin: ['http://localhost:5173', 'https://paulislanches.vercel.app'],
+      }),
+    );
     this.app.use(express.json());
 
     this.app.use(
