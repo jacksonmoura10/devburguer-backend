@@ -1,12 +1,10 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import Sequelize from 'sequelize';
-
-import configDatabase from '../config/database.js';
-
 import Category from '../app/models/Category.js';
 import Product from '../app/models/Products.js';
 import User from '../app/models/User.js';
+import configDatabase from '../config/database.js';
 
 const models = [User, Product, Category];
 
@@ -34,9 +32,10 @@ class Database {
   async mongo() {
     try {
       await mongoose.connect(process.env.MONGO_URL, {
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 30000,
+        connectTimeoutMS: 30000,
+        socketTimeoutMS: 30000,
       });
-
       console.log('✅ MongoDB conectado com sucesso!');
     } catch (err) {
       console.error('❌ Erro ao conectar ao MongoDB:', err);
