@@ -11,7 +11,7 @@ class Product extends Model {
         url: {
           type: Sequelize.VIRTUAL,
           get() {
-            return `http://localhost:3001/product-file/${this.path}`;
+            return `https://devburguer-backend.onrender.com/product-file/${this.path}`;
           },
         },
       },
@@ -19,7 +19,7 @@ class Product extends Model {
         sequelize,
         tableName: 'products',
         underscored: true,
-      }
+      },
     );
 
     return this;
@@ -28,10 +28,9 @@ class Product extends Model {
   static associate(models) {
     this.belongsTo(models.Category, {
       foreignKey: 'category_id',
-      as: 'category'
+      as: 'category',
     });
   }
 }
 
 export default Product;
-
