@@ -1,33 +1,26 @@
-import cors from 'cors';
 import express from 'express';
-import { resolve } from 'node:path';
-import './database/index';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import routes from './routes';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class App {
   constructor() {
     this.app = express();
+
     this.middlewares();
     this.routes();
   }
 
   middlewares() {
-    this.app.use(
-      cors({
-        origin: ['http://localhost:5173', 'https://paulislanches.vercel.app'],
-      }),
-    );
     this.app.use(express.json());
 
-    console.log('Uploads path:', resolve(__dirname, '..', 'uploads'));
-
     this.app.use(
-      '/product-file',
-      express.static(resolve(__dirname, '..', 'uploads')),
-    );
-    this.app.use(
-      '/category-file',
-      express.static(resolve(__dirname, '..', 'uploads')),
+      '/uploads',
+      express.static(path.resolve(__dirname, '..', 'uploads'))
     );
   }
 
