@@ -19,6 +19,8 @@ class App {
     );
     this.app.use(express.json());
 
+    console.log('Uploads path:', resolve(__dirname, '..', 'uploads'));
+
     this.app.use(
       '/product-file',
       express.static(resolve(__dirname, '..', 'uploads')),
