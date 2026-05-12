@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import Category from '../models/Category';
-import Product from '../models/Products';
+import Product from '../models/Product';
 import User from '../models/User';
 
 class ProductController {
@@ -32,7 +32,9 @@ class ProductController {
     const findProduct = await Product.findByPk(id);
 
     if (!findProduct) {
-      return response.status(400).json({ error: 'Make sure product ID is correct' });
+      return response
+        .status(400)
+        .json({ error: 'Make sure product ID is correct' });
     }
 
     let path = findProduct.path;
@@ -54,7 +56,9 @@ class ProductController {
       { where: { id } },
     );
 
-    return response.status(200).json({ message: 'Product updated successfully' });
+    return response
+      .status(200)
+      .json({ message: 'Product updated successfully' });
   }
 
   async store(request, response) {
@@ -116,12 +120,16 @@ class ProductController {
     const findProduct = await Product.findByPk(id);
 
     if (!findProduct) {
-      return response.status(400).json({ error: 'Make sure product ID is correct' });
+      return response
+        .status(400)
+        .json({ error: 'Make sure product ID is correct' });
     }
 
     await Product.destroy({ where: { id } });
 
-    return response.status(200).json({ message: 'Product deleted successfully' });
+    return response
+      .status(200)
+      .json({ message: 'Product deleted successfully' });
   }
 }
 
