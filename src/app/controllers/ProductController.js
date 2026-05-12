@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import Category from '../models/Category';
-import Product from '../models/Product';
+import Product from '../models/Products';
 import User from '../models/User';
 
 class ProductController {
@@ -17,37 +17,28 @@ class ProductController {
     }
 
     try {
-      schema.validateSync(request.body, {
-        abortEarly: false,
-      });
+      schema.validateSync(request.body, { abortEarly: false });
     } catch (err) {
-      return response.status(400).json({
-        error: err.errors,
-      });
+      return response.status(400).json({ error: err.errors });
     }
 
     const { admin: isAdmin } = await User.findByPk(request.userId);
 
     if (!isAdmin) {
-      return response.status(401).json({
-        error: 'User is not admin',
-      });
+      return response.status(401).json({ error: 'User is not admin' });
     }
 
     const { id } = request.params;
-
     const findProduct = await Product.findByPk(id);
 
     if (!findProduct) {
-      return response.status(400).json({
-        error: 'Make sure product ID is correct',
-      });
+      return response.status(400).json({ error: 'Make sure product ID is correct' });
     }
 
     let path = findProduct.path;
 
     if (request.file) {
-      path = request.file.filename;
+      path = request.file.path;
     }
 
     const { name, price, category_id, offer } = request.body;
@@ -60,16 +51,10 @@ class ProductController {
         offer: offer ?? findProduct.offer,
         path,
       },
-      {
-        where: {
-          id,
-        },
-      },
+      { where: { id } },
     );
 
-    return response.status(200).json({
-      message: 'Product updated successfully',
-    });
+    return response.status(200).json({ message: 'Product updated successfully' });
   }
 
   async store(request, response) {
@@ -81,25 +66,18 @@ class ProductController {
     });
 
     try {
-      schema.validateSync(request.body, {
-        abortEarly: false,
-      });
+      schema.validateSync(request.body, { abortEarly: false });
     } catch (err) {
-      return response.status(400).json({
-        error: err.errors,
-      });
+      return response.status(400).json({ error: err.errors });
     }
 
     const { admin: isAdmin } = await User.findByPk(request.userId);
 
     if (!isAdmin) {
-      return response.status(401).json({
-        error: 'User is not admin',
-      });
+      return response.status(401).json({ error: 'User is not admin' });
     }
 
-    const { filename: path } = request.file;
-
+    const { path } = request.file;
     const { name, price, category_id, offer } = request.body;
 
     const product = await Product.create({
@@ -131,30 +109,19 @@ class ProductController {
     const { admin: isAdmin } = await User.findByPk(request.userId);
 
     if (!isAdmin) {
-      return response.status(401).json({
-        error: 'User is not admin',
-      });
+      return response.status(401).json({ error: 'User is not admin' });
     }
 
     const { id } = request.params;
-
     const findProduct = await Product.findByPk(id);
 
     if (!findProduct) {
-      return response.status(400).json({
-        error: 'Make sure product ID is correct',
-      });
+      return response.status(400).json({ error: 'Make sure product ID is correct' });
     }
 
-    await Product.destroy({
-      where: {
-        id,
-      },
-    });
+    await Product.destroy({ where: { id } });
 
-    return response.status(200).json({
-      message: 'Product deleted successfully',
-    });
+    return response.status(200).json({ message: 'Product deleted successfully' });
   }
 }
 

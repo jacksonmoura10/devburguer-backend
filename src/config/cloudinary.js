@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
-import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import multer from 'multer';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,8 +13,8 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'devburguer',
     allowed_formats: ['jpg', 'jpeg', 'png'],
-    public_id: (req, file) => `${Date.now()}-${file.originalname}`,
   },
 });
 
-export default multer({ storage });
+export const upload = multer({ storage });
+export default cloudinary;
