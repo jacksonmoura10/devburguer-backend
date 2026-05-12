@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import cors from 'cors';
 
 import routes from './routes';
 
@@ -12,6 +13,13 @@ class App {
   }
 
   middlewares() {
+    this.app.use(
+      cors({
+        origin: 'https://paulislanches.vercel.app',
+        credentials: true,
+      })
+    );
+
     this.app.use(express.json());
 
     this.app.use(
