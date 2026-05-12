@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
-import User from '../models/User';
 import jwt from 'jsonwebtoken';
-import authConfig from '../../config/auth';
+
+import User from '../models/User.js';
+import authConfig from '../../config/auth.js';
 
 class SessionController {
   async store(req, res) {
@@ -20,13 +21,17 @@ class SessionController {
       const user = await User.findOne({ where: { email } });
 
       if (!user) {
-        return res.status(401).json({ error: 'Email ou senha incorretos' });
+        return res.status(401).json({
+          error: 'Email ou senha incorretos',
+        });
       }
 
       const isSamePassword = await user.checkPassword(password);
 
       if (!isSamePassword) {
-        return res.status(401).json({ error: 'Email ou senha incorretos' });
+        return res.status(401).json({
+          error: 'Email ou senha incorretos',
+        });
       }
 
       return res.status(201).json({
@@ -35,14 +40,19 @@ class SessionController {
         email: user.email,
         admin: user.admin,
         token: jwt.sign(
-          { id: user.id, name: user.name },
+          {
+            id: user.id,
+            name: user.name,
+          },
           authConfig.secret,
           {
-            expiresIn: authConfig.expiresIn, // ou '7d'
-          }
+            expiresIn: authConfig.expiresIn,
+          },
         ),
       });
     } catch (error) {
+      console.log(error);
+
       return res.status(500).json({
         error: 'Erro ao fazer login',
       });
