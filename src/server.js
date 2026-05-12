@@ -1,11 +1,7 @@
-import express from 'express';
-import path from 'path';
+import app from './app';
 
-const app = express();
+const PORT = process.env.PORT || 3001;
 
-app.use(express.json());
-
-app.use(
-  '/uploads',
-  express.static(path.resolve(__dirname, '..', 'uploads'))
-);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}...`);
+});
