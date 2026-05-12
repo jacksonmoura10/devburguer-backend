@@ -20,7 +20,7 @@ class SessionController {
 
       const { email, password } = req.body;
 
-      console.log('MODEL USER:', User);
+      
 
       const user = await User.findOne({
         where: { email },

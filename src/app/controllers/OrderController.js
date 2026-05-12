@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import Category from '../models/Category';
-import Product from '../models/Products';
+import Product from '../models/Product';
 import User from '../models/User';
 import Order from '../schemas/Order';
 

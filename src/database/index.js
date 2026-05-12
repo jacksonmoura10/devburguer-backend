@@ -3,9 +3,9 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import Sequelize from 'sequelize';
 
-import User from '../app/models/User.js';
-import Product from '../app/models/Products.js';
 import Category from '../app/models/Category.js';
+import Product from '../app/models/Product.js';
+import User from '../app/models/User.js';
 
 import configDatabase from '../config/database.js';
 
@@ -28,9 +28,7 @@ class Database {
     models
       .map((model) => model.init(this.connection))
       .map(
-        (model) =>
-          model.associate &&
-          model.associate(this.connection.models),
+        (model) => model.associate && model.associate(this.connection.models),
       );
   }
 
