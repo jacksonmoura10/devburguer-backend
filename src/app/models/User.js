@@ -1,36 +1,44 @@
-import Sequelize, { Model } from 'sequelize';
+import bcrypt from 'bcryptjs';
+import { DataTypes, Model } from 'sequelize';
 
-class Product extends Model {
+class User extends Model {
   static init(sequelize) {
     super.init(
       {
-        name: Sequelize.STRING,
-        price: Sequelize.FLOAT,
-        path: Sequelize.STRING,
-        offer: Sequelize.BOOLEAN,
-        url: {
-          type: Sequelize.VIRTUAL,
-          get() {
-            return `https://devburguer-backend.onrender.com/uploads/${this.path}`;
-          },
+        id: {
+          type: DataTypes.UUID,
+          primaryKey: true,
         },
+
+        name: DataTypes.STRING,
+
+        email: DataTypes.STRING,
+
+        password: DataTypes.VIRTUAL,
+
+        password_hash: DataTypes.STRING,
+
+        admin: DataTypes.BOOLEAN,
       },
       {
         sequelize,
-        tableName: 'products',
+        tableName: 'users',
         underscored: true,
       },
     );
 
+    this.addHook('beforeSave', async (user) => {
+      if (user.password) {
+        user.password_hash = await bcrypt.hash(user.password, 8);
+      }
+    });
+
     return this;
   }
 
-  static associate(models) {
-    this.belongsTo(models.Category, {
-      foreignKey: 'category_id',
-      as: 'category',
-    });
+  checkPassword(password) {
+    return bcrypt.compare(password, this.password_hash);
   }
 }
 
-export default Product;
+export default User;
