@@ -13,12 +13,18 @@ class SessionController {
       });
 
       if (!(await schema.isValid(req.body))) {
-        return res.status(401).json({ error: 'Validation fails' });
+        return res.status(401).json({
+          error: 'Validation fails',
+        });
       }
 
       const { email, password } = req.body;
 
-      const user = await User.findOne({ where: { email } });
+      console.log('MODEL USER:', User);
+
+      const user = await User.findOne({
+        where: { email },
+      });
 
       if (!user) {
         return res.status(401).json({
@@ -51,7 +57,8 @@ class SessionController {
         ),
       });
     } catch (error) {
-      console.log(error);
+      console.error('ERRO LOGIN:', error);
+      console.error(error.stack);
 
       return res.status(500).json({
         error: 'Erro ao fazer login',

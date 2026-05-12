@@ -1,9 +1,12 @@
 import 'dotenv/config';
+
 import mongoose from 'mongoose';
 import Sequelize from 'sequelize';
-import Category from '../app/models/Category.js';
-import Product from '../app/models/Products.js';
+
 import User from '../app/models/User.js';
+import Product from '../app/models/Products.js';
+import Category from '../app/models/Category.js';
+
 import configDatabase from '../config/database.js';
 
 const models = [User, Product, Category];
@@ -25,7 +28,9 @@ class Database {
     models
       .map((model) => model.init(this.connection))
       .map(
-        (model) => model.associate && model.associate(this.connection.models),
+        (model) =>
+          model.associate &&
+          model.associate(this.connection.models),
       );
   }
 
@@ -36,6 +41,7 @@ class Database {
         connectTimeoutMS: 30000,
         socketTimeoutMS: 30000,
       });
+
       console.log('✅ MongoDB conectado com sucesso!');
     } catch (err) {
       console.error('❌ Erro ao conectar ao MongoDB:', err);
