@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Deveburguer",
   "main": "src/server.js",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "nodemon",
     "start": "sucrase-node src/server.js"
@@ -25,6 +28,7 @@
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
+    "uuid": "^11.1.0",
     "yup": "^1.7.0"
   },
   "devDependencies": {
