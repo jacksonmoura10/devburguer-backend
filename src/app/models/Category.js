@@ -9,15 +9,15 @@ class Category extends Model {
         url: {
           type: Sequelize.VIRTUAL,
           get() {
-            return `https://devburguer-backend.onrender.com/category-file/${this.path}`;
-          }
-        }
+            return this.path;
+          },
+        },
       },
       {
         sequelize,
         tableName: 'categories',
         underscored: true,
-      }
+      },
     );
 
     return this;
